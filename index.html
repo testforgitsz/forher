@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Muffin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --pink: #c45c7a;
+      --light-pink: #f7c5d0;
+      --petal1: #e8849a;
+      --petal2: #f2a0b5;
+      --petal3: #fbc5d3;
+      --cream: #fdf8f5;
+      --text: #2a1a1a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--cream);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    /* ── SCENE ── */
+    .scene {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 0 64px;
+    }
+
+    /* ── NAME (always visible) ── */
+    .name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.8rem;
+      font-weight: 400;
+      letter-spacing: 4px;
+      color: var(--text);
+      margin-bottom: 6px;
+      z-index: 10;
+      animation: up 1s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .tagline {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #b89098;
+      margin-bottom: 48px;
+      z-index: 10;
+      animation: up 1s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FLOWER CONTAINER ── */
+    .flower-wrap {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin-bottom: 40px;
+      z-index: 10;
+      animation: up 1s 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    /* Centre */
+    .center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 46px; height: 46px;
+      background: radial-gradient(circle, #f9e4a0, #e8c46a);
+      border-radius: 50%;
+      z-index: 5;
+      box-shadow: 0 2px 12px rgba(232,196,106,0.5);
+      transition: transform 0.4s;
+    }
+    .flower-wrap:hover .center { transform: translate(-50%, -50%) scale(1.08); }
+
+    /* Petals */
+    .petal {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 54px; height: 80px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      transform-origin: 50% 100%;
+      opacity: 0;
+      /* closed: folded inward */
+      transform: translate(-50%, -100%) rotate(calc(var(--angle))) scaleY(0.1) scaleX(0.6);
+      transition:
+        transform 0.9s cubic-bezier(0.34,1.3,0.64,1),
+        opacity 0.5s ease;
+    }
+
+    /* 6 petals evenly spaced */
+    .petal:nth-child(1)  { --angle: 0deg;    background: var(--petal1); transition-delay: 0s; }
+    .petal:nth-child(2)  { --angle: 60deg;   background: var(--petal2); transition-delay: 0.07s; }
+    .petal:nth-child(3)  { --angle: 120deg;  background: var(--petal3); transition-delay: 0.14s; }
+    .petal:nth-child(4)  { --angle: 180deg;  background: var(--petal1); transition-delay: 0.21s; }
+    .petal:nth-child(5)  { --angle: 240deg;  background: var(--petal2); transition-delay: 0.28s; }
+    .petal:nth-child(6)  { --angle: 300deg;  background: var(--petal3); transition-delay: 0.35s; }
+
+    /* OPEN state */
+    .flower-wrap.open .petal {
+      opacity: 1;
+      transform: translate(-50%, -100%) rotate(calc(var(--angle))) scaleY(1) scaleX(1);
+    }
+
+    /* Stem */
+    .stem {
+      position: absolute;
+      bottom: -48px; left: 50%;
+      transform: translateX(-50%);
+      width: 4px; height: 50px;
+      background: linear-gradient(to bottom, #7db87d, #5a9a5a);
+      border-radius: 4px;
+      transform-origin: top center;
+      opacity: 0;
+      transition: opacity 0.4s 0.6s;
+    }
+    .flower-wrap.open .stem { opacity: 1; }
+
+    /* Leaf */
+    .leaf {
+      position: absolute;
+      bottom: -28px; left: calc(50% + 2px);
+      width: 22px; height: 14px;
+      background: #6db86d;
+      border-radius: 50% 0 50% 0;
+      transform: rotate(-30deg);
+      transform-origin: left center;
+      opacity: 0;
+      transition: opacity 0.4s 0.8s;
+    }
+    .flower-wrap.open .leaf { opacity: 1; }
+
+    /* ── BUTTON ── */
+    .btn {
+      background: none;
+      border: 1px solid var(--pink);
+      color: var(--pink);
+      padding: 15px 44px;
+      border-radius: 50px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.82rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, opacity 0.4s;
+      z-index: 10;
+      animation: up 1s 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .btn:hover { background: var(--pink); color: white; }
+    .btn.hidden { opacity: 0; pointer-events: none; }
+
+    /* ── REVEALED CONTENT ── */
+    .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 36px 36px;
+      gap: 22px;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.8s 0.5s, transform 0.8s 0.5s;
+      z-index: 10;
+      background: rgba(253, 248, 245, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 24px;
+      border: 1px solid rgba(232, 208, 216, 0.6);
+      box-shadow: 0 8px 40px rgba(196, 92, 122, 0.08);
+      max-width: 380px;
+      width: 88%;
+      margin-top: 16px;
+    }
+    .content.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .verse-ref {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      color: var(--pink);
+    }
+    .verse-hint {
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #c9a8b0;
+      margin-top: -14px;
+    }
+
+    .divider {
+      width: 36px; height: 1px;
+      background: #e8d0d8;
+    }
+
+    .message {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: #4a2a35;
+      line-height: 2;
+      text-align: center;
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: #b89098;
+      font-family: 'Jost', sans-serif;
+    }
+
+    .footer-divider {
+      width: 36px; height: 1px;
+      background: #e8d0d8;
+    }
+    .close-btn {
+      background: none;
+      border: 1px solid #e8d0d8;
+      color: #c9a8b0;
+      padding: 10px 32px;
+      border-radius: 50px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      margin-top: 4px;
+    }
+    .close-btn:hover { background: #f2e0e6; color: var(--pink); }
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #c9a8b0;
+    }
+
+    /* floating petals bg */
+    .petal-bg {
+      position: fixed; inset: 0;
+      pointer-events: none; overflow: hidden; z-index: 0;
+      opacity: 0; transition: opacity 1s 0.4s;
+    }
+    .petal-bg.show { opacity: 1; }
+    .fp {
+      position: absolute;
+      border-radius: 50% 0 50% 0;
+      opacity: 0;
+      animation: fall linear infinite;
+      top: -20px;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.45; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="petal-bg" id="petalBg"></div>
+
+<div class="scene">
+
+  <p class="name">Muffin</p>
+  <p class="tagline">this one's for you</p>
+
+  <div class="flower-wrap" id="flower">
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="center"></div>
+    <div class="stem"></div>
+    <div class="leaf"></div>
+  </div>
+
+  <button class="btn" id="btn">Open</button>
+
+  <div class="content" id="content">
+    <p class="verse-ref">Philippians 1:3</p>
+    <p class="verse-hint">go look it up 🌸</p>
+
+    <div class="divider"></div>
+
+    <p class="message">
+      So proud of how far you've come —<br/>
+      every late night, every hard day,<br/>
+      it's all leading somewhere beautiful.
+    </p>
+
+    <p class="message">
+      If you ever need anything,<br/>
+      just ask. I'm here. 😉
+    </p>
+
+    <p class="hint">— someone who's always rooting for you</p>
+
+    <div class="footer-divider"></div>
+    <p class="from">with love, always 🌸</p>
+
+    <button class="close-btn" id="closeBtn">Close</button>
+  </div>
+
+</div>
+
+<script>
+  // Floating petals background
+  const bg = document.getElementById('petalBg');
+  const colors = ['#f2a0b5','#e8849a','#fbc5d3','#f9e4a0'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'fp';
+    p.style.cssText = `
+      left: ${Math.random()*100}vw;
+      width: ${6+Math.random()*10}px;
+      height: ${6+Math.random()*10}px;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration: ${5+Math.random()*7}s;
+      animation-delay: ${Math.random()*8}s;
+    `;
+    bg.appendChild(p);
+  }
+
+  document.getElementById('btn').addEventListener('click', function() {
+    document.getElementById('flower').classList.add('open');
+    bg.classList.add('show');
+    this.classList.add('hidden');
+    setTimeout(() => {
+      document.getElementById('content').classList.add('show');
+    }, 700);
+  });
+
+  document.getElementById('closeBtn').addEventListener('click', function() {
+    // hide content
+    document.getElementById('content').classList.remove('show');
+    // close flower
+    setTimeout(() => {
+      document.getElementById('flower').classList.remove('open');
+      bg.classList.remove('show');
+    }, 300);
+    // bring back open button
+    setTimeout(() => {
+      document.getElementById('btn').classList.remove('hidden');
+    }, 600);
+  });
+</script>
+</body>
+</html>
